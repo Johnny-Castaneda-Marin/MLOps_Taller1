@@ -39,6 +39,7 @@ Pipeline MLOps que cubre desde el entrenamiento de 3 modelos de clasificación h
 │       └── model_metrics.pkl          # DataFrame con métricas de los modelos
 ├── Docker/
 │   └── Dockerfile
+├── images/                            # Capturas de pantalla
 ├── model_train_and_save/
 │   ├── train.ipynb                    # Notebook de entrenamiento
 │   ├── penguins_v1.csv               # Dataset
@@ -157,8 +158,8 @@ Si un campo no cumple, la API retorna `422 Unprocessable Entity` con el detalle 
 
 FastAPI genera Swagger UI automáticamente con valores de ejemplo prellenados:
 
-- **Swagger UI**: `http://localhost:8001/docs`
-- **ReDoc**: `http://localhost:8001/redoc`
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
 
 ---
 
@@ -182,15 +183,21 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 
 Copia `app.py`, la carpeta `modelos/` (3 modelos + scaler) y `report/` (DataFrame de métricas) manteniendo las rutas relativas que espera la API.
 
-### Construcción y ejecución
+### Construcción
 
 ```bash
-# Build (desde la raíz del proyecto)
 docker build -f Docker/Dockerfile -t penguin-api .
-
-# Run
-docker run -d --name penguin-api -p 8001:8000 penguin-api
 ```
+
+![Docker Build](images/docker_build.png)
+
+### Ejecución
+
+```bash
+docker run -d --name penguin-api -p 8000:8000 penguin-api
+```
+
+![Docker Run](images/docker_run.png)
 
 ---
 
@@ -206,52 +213,92 @@ docker run -d --name penguin-api -p 8001:8000 penguin-api
 
 Los 3 modelos logran accuracy perfecta en entrenamiento. En test, SVM alcanza 100% en todas las métricas, mientras que Random Forest y Gradient Boosting comparten un test accuracy de 98.51%.
 
-### Prueba del endpoint `/models`
+Las pruebas se realizaron usando Postman contra la API corriendo en `http://localhost:8000`.
 
-```bash
-curl -s http://localhost:8001/models
-```
+### Consulta de modelos disponibles
 
-Retorna los 3 modelos con sus métricas de evaluación cargadas desde `report/model_metrics.pkl`.
+`GET http://localhost:8000/models`
 
-### Prueba de clasificación
+![Postman /models](images/postman_models.png)
 
-```bash
-curl -X POST http://localhost:8001/classify/svm \
-  -H "Content-Type: application/json" \
-  -d '{"island":1,"bill_length_mm":39.1,"bill_depth_mm":18.7,"flipper_length_mm":181,"body_mass_g":3750,"sex":1,"year":2007}'
-```
+### Clasificación con Random Forest
 
-```json
-{"model": "svm", "species_id": 1, "species_name": "Adelie"}
-```
+`POST http://localhost:8000/classify/randomforest`
 
-### Prueba de validación de errores
-
-```bash
-curl -X POST http://localhost:8001/classify/svm \
-  -H "Content-Type: application/json" \
-  -d '{"island":5,"bill_length_mm":39.1,"bill_depth_mm":18.7,"flipper_length_mm":181,"body_mass_g":3750,"sex":1,"year":2007}'
-```
-
+Body (JSON):
 ```json
 {
-  "detail": [
-    {
-      "type": "value_error",
-      "loc": ["body", "island"],
-      "msg": "Value error, island debe ser 1, 2 o 3"
-    }
-  ]
+  "island": 1,
+  "bill_length_mm": 39.1,
+  "bill_depth_mm": 18.7,
+  "flipper_length_mm": 181,
+  "body_mass_g": 3750,
+  "sex": 1,
+  "year": 2007
 }
 ```
 
-### Prueba de modelo inexistente
+![Postman Random Forest](images/postman_classify_randomforest.png)
 
-```bash
-curl -s http://localhost:8001/classify/xgboost
-```
+### Clasificación con SVM
 
+`POST http://localhost:8000/classify/svm`
+
+Body (JSON):
 ```json
-{"detail": "Modelo 'xgboost' no encontrado. Usa GET /models para ver los disponibles."}
+{
+  "island": 1,
+  "bill_length_mm": 39.1,
+  "bill_depth_mm": 18.7,
+  "flipper_length_mm": 181,
+  "body_mass_g": 3750,
+  "sex": 1,
+  "year": 2007
+}
 ```
+
+![Postman SVM](images/postman_classify_svm.png)
+
+### Clasificación con Gradient Boosting
+
+`POST http://localhost:8000/classify/gradientboosting`
+
+Body (JSON):
+```json
+{
+  "island": 1,
+  "bill_length_mm": 39.1,
+  "bill_depth_mm": 18.7,
+  "flipper_length_mm": 181,
+  "body_mass_g": 3750,
+  "sex": 1,
+  "year": 2007
+}
+```
+
+![Postman Gradient Boosting](images/postman_classify_gradientboosting.png)
+
+### Validación de errores
+
+`POST http://localhost:8000/classify/svm`
+
+Body (JSON) con valor inválido en `island`:
+```json
+{
+  "island": 5,
+  "bill_length_mm": 39.1,
+  "bill_depth_mm": 18.7,
+  "flipper_length_mm": 181,
+  "body_mass_g": 3750,
+  "sex": 1,
+  "year": 2007
+}
+```
+
+![Postman validación error](images/postman_validation_error.png)
+
+### Modelo inexistente
+
+`POST http://localhost:8000/classify/xgboost`
+
+![Postman modelo inexistente](images/postman_model_not_found.png)
