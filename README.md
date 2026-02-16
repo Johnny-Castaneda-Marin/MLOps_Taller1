@@ -234,7 +234,7 @@ docker build -f Docker/Dockerfile -t penguin-api .
 docker run -d --name penguin-api -p 8989:8989 penguin-api
 ```
 
-![Docker Run](images/docker_run.png)
+![Docker Run](imagenes_8989/Docker_8989.png)
 
 ---
 
