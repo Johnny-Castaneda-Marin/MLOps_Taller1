@@ -194,8 +194,8 @@ Si un campo no cumple, la API retorna `422 Unprocessable Entity` con el detalle 
 
 FastAPI genera Swagger UI automáticamente con valores de ejemplo prellenados:
 
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+- **Swagger UI**: `http://localhost:8989/docs`
+- **ReDoc**: `http://localhost:8989/redoc`
 
 ---
 
@@ -213,8 +213,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY API/app.py .
 COPY API/modelos/ modelos/
 COPY API/report/ report/
-EXPOSE 8000
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8989
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8989"]
 ```
 
 Copia `app.py`, la carpeta `modelos/` (3 modelos + scaler) y `report/` (DataFrame de métricas) manteniendo las rutas relativas que espera la API.
