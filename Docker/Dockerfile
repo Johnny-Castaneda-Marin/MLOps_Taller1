@@ -9,6 +9,6 @@ COPY API/app.py .
 COPY API/modelos/ modelos/
 COPY API/report/ report/
 
-EXPOSE 8000
+EXPOSE 8989
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8989"]
