@@ -226,7 +226,7 @@ Copia `app.py`, la carpeta `modelos/` (3 modelos + scaler) y `report/` (DataFram
 docker build -f Docker/Dockerfile -t penguin-api .
 ```
 
-![Docker Build](images/docker_build.png)
+![Docker Run](imagenes_8989/docker_build.png)
 
 ### Ejecución
 
