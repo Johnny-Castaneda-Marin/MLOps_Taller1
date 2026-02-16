@@ -4,12 +4,14 @@ API de clasificación de especies de pingüinos con 3 modelos de Machine Learnin
 
 ## Tabla de Contenidos
 
-- [Descripción General](#descripción-general)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Entrenamiento de los Modelos](#entrenamiento-de-los-modelos)
-- [Desarrollo de la API](#desarrollo-de-la-api)
-- [Contenerización con Docker](#contenerización-con-docker)
-- [Pruebas y Resultados](#pruebas-y-resultados)
+- 📖 [Descripción General](#descripción-general)
+- 🗂️ [Estructura del Proyecto](#estructura-del-proyecto)
+- 🔄[Arquitectura de flujo](#arquitectura-de-flujo) 
+- 🧠 [Entrenamiento de los Modelos](#entrenamiento-de-los-modelos)
+- 🔌 [Desarrollo de la API](#desarrollo-de-la-api)
+- 🐳[Contenerización con Docker](#contenerización-con-docker)
+- 🏁[Pruebas y Resultados](#pruebas-y-resultados)
+
 
 ---
 
@@ -17,11 +19,17 @@ API de clasificación de especies de pingüinos con 3 modelos de Machine Learnin
 
 Pipeline MLOps que cubre desde el entrenamiento de 3 modelos de clasificación hasta su despliegue como API REST en un contenedor Docker. Los modelos clasifican pingüinos en 3 especies a partir de medidas morfológicas.
 
-| ID | Especie   |
-|----|-----------|
-| 1  | Adelie    |
-| 2  | Chinstrap |
-| 3  | Gentoo    |
+
+<div style="font-size: 16px">
+
+| ID | Especie | Imagen |
+|---:|---|---|
+| 1 | Adelie | <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Adelie%20Penguin.jpg?width=90" width="80" /> |
+| 2 | Chinstrap | <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Chinstrap%20Penguin.jpg?width=90" width="80" /> |
+| 3 | Gentoo | <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gentoo_penguin.jpg?width=90" width="80" /> |
+
+</div>
+
 
 ---
 
@@ -46,6 +54,34 @@ Pipeline MLOps que cubre desde el entrenamiento de 3 modelos de clasificación h
 │   └── requirements.txt              # Dependencias Python
 └── README.md
 ```
+## Arquitectura de flujo 
+
+---
+        ┌──────────────────────────────┐
+        │ model_train_and_save/        │
+        │  - train.ipynb               │
+        │  - penguins_v1.csv           │
+        │  - requirements.txt          │
+        └───────────────┬──────────────┘
+                        │ Enrenamiento y evalución
+                        ▼
+        ┌──────────────────────────────┐
+        │ API/modelos/                 │
+        │  - *.pkl (3 modelos)         │
+        │  - scaler.pkl                │
+        └───────────────┬──────────────┘
+                        │ cargar la APi 
+                        ▼
+        ┌──────────────────────────────┐
+        │ API/app.py (FastAPI)         │
+        │  - /models                   │
+        │  - /classify/{model_name}    │
+        └───────────────┬──────────────┘
+                        │ Contenedor
+                        ▼
+        ┌──────────────────────────────┐
+        │ Docker/Dockerfile            │
+        └──────────────────────────────┘
 
 ---
 
