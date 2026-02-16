@@ -351,7 +351,18 @@ Body (JSON) con valor inválido en `largo_pico`:
 
 ### Modelo inexistente
 
+
 `POST http://localhost:8989/classify/xgboost`
 
 ![Postman modelo inexistente](imagenes_8989/Post_Validacion_de_error_modelo_inexistente%20.png)
+
+
+---
+
+## 👥 Colaboradores
+
+- 🧑‍💻 **Camilo Cortés** — [![GitHub](https://img.shields.io/badge/GitHub-@cccortesh95-181717?logo=github)](https://github.com/cccortesh95)
+- 🧑‍💻 **Johnny Castañeda** — [![GitHub](https://img.shields.io/badge/GitHub-@Johnny--Castaneda--Marin-181717?logo=github)](https://github.com/Johnny-Castaneda-Marin)
+- 🧑‍💻 **Benkos Triana** — 
+
 
