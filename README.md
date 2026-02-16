@@ -256,7 +256,7 @@ Las pruebas se realizaron usando Postman contra la API corriendo en `http://loca
 
 `GET http://localhost:8989/models`
 
-![Postman /models](images/postman_models.png)
+![Postman /models](imagenes_8989/Get_modelos_disponibles.png)
 
 ### Clasificación con Random Forest
 
@@ -275,7 +275,7 @@ Body (JSON):
 }
 ```
 
-![Postman Random Forest](images/postman_classify_randomforest.png)
+![Postman /models](imagenes_8989/Post_modelo_randomforest.png)
 
 ### Clasificación con SVM
 
@@ -294,7 +294,7 @@ Body (JSON):
 }
 ```
 
-![Postman SVM](images/postman_classify_svm.png)
+![Postman /models](imagenes_8989/Post_modelo_svm.png)
 
 ### Clasificación con Gradient Boosting
 
@@ -313,7 +313,7 @@ Body (JSON):
 }
 ```
 
-![Postman Gradient Boosting](images/postman_classify_gradientboosting.png)
+![Postman /models](imagenes_8989/Post_modelo_gradientboosting.png)
 
 ### Validación de errores
 
@@ -332,10 +332,26 @@ Body (JSON) con valor inválido en `island`:
 }
 ```
 
-![Postman validación error](images/postman_validation_error.png)
+![Postman /models](imagenes_8989/Post_Validacion_de_error_isla.png)
+
+Body (JSON) con valor inválido en `largo_pico`:
+```json
+{
+  "island": 5,
+  "bill_length_mm": 1000,
+  "bill_depth_mm": 18.7,
+  "flipper_length_mm": 181,
+  "body_mass_g": 3750,
+  "sex": 1,
+  "year": 2007
+}
+```
+![Postman /models](imagenes_8989/Post_Validacion_de_error_largo_de_pico.png)
+
 
 ### Modelo inexistente
 
 `POST http://localhost:8989/classify/xgboost`
 
-![Postman modelo inexistente](images/postman_model_not_found.png)
+![Postman modelo inexistente](imagenes_8989/Post_Validacion_de_error_modelo_inexistente%20.png)
+
