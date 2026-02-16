@@ -56,34 +56,35 @@ Pipeline MLOps que cubre desde el entrenamiento de 3 modelos de clasificación h
 ```
 ## Arquitectura de flujo 
 
----
-        ┌──────────────────────────────┐
-        │ model_train_and_save/        │
-        │  - train.ipynb               │
-        │  - penguins_v1.csv           │
-        │  - requirements.txt          │
-        └───────────────┬──────────────┘
-                        │ Enrenamiento y evalución
-                        ▼
-        ┌──────────────────────────────┐
-        │ API/modelos/                 │
-        │  - *.pkl (3 modelos)         │
-        │  - scaler.pkl                │
-        └───────────────┬──────────────┘
-                        │ cargar la APi 
-                        ▼
-        ┌──────────────────────────────┐
-        │ API/app.py (FastAPI)         │
-        │  - /models                   │
-        │  - /classify/{model_name}    │
-        └───────────────┬──────────────┘
-                        │ Contenedor
-                        ▼
-        ┌──────────────────────────────┐
-        │ Docker/Dockerfile            │
-        └──────────────────────────────┘
-
----
+```
+┌──────────────────────────────┐
+│ model_train_and_save/        │
+│  - train.ipynb               │
+│  - penguins_v1.csv           │
+│  - requirements.txt          │
+└───────────────┬──────────────┘
+                │ Entrenamiento y evaluación
+                ▼
+┌──────────────────────────────┐
+│ API/modelos/                 │
+│  - *.pkl (3 modelos)         │
+│  - scaler.pkl                │
+│ API/report/model_metrics.pkl │
+└───────────────┬──────────────┘
+                │ Carga en la API
+                ▼
+┌──────────────────────────────┐
+│ API/app.py (FastAPI)         │
+│  - GET /models               │
+│  - POST /classify/{model}    │
+└───────────────┬──────────────┘
+                │ Contenedor
+                ▼
+┌──────────────────────────────┐
+│ Docker/Dockerfile            │
+│  Puerto 8989                 │
+└──────────────────────────────┘
+```
 
 ## Entrenamiento de los Modelos
 
@@ -121,7 +122,7 @@ El notebook `model_train_and_save/train.ipynb` ejecuta el siguiente pipeline:
 
 ## Desarrollo de la API
 
-La API fue construida con **FastAPI** y **Pydantic v2**. Al iniciar, carga los 3 modelos serializados, el scaler y el DataFrame de métricas desde disco.
+La API está construida con **FastAPI** y **Pydantic v2**. Al iniciar, carga los 3 modelos serializados, el scaler y el DataFrame de métricas desde disco.
 
 ### Endpoints
 
@@ -230,7 +231,7 @@ docker build -f Docker/Dockerfile -t penguin-api .
 ### Ejecución
 
 ```bash
-docker run -d --name penguin-api -p 8000:8000 penguin-api
+docker run -d --name penguin-api -p 8989:8989 penguin-api
 ```
 
 ![Docker Run](images/docker_run.png)
@@ -249,17 +250,17 @@ docker run -d --name penguin-api -p 8000:8000 penguin-api
 
 Los 3 modelos logran accuracy perfecta en entrenamiento. En test, SVM alcanza 100% en todas las métricas, mientras que Random Forest y Gradient Boosting comparten un test accuracy de 98.51%.
 
-Las pruebas se realizaron usando Postman contra la API corriendo en `http://localhost:8000`.
+Las pruebas se realizaron usando Postman contra la API corriendo en `http://localhost:8989`.
 
 ### Consulta de modelos disponibles
 
-`GET http://localhost:8000/models`
+`GET http://localhost:8989/models`
 
 ![Postman /models](images/postman_models.png)
 
 ### Clasificación con Random Forest
 
-`POST http://localhost:8000/classify/randomforest`
+`POST http://localhost:8989/classify/randomforest`
 
 Body (JSON):
 ```json
@@ -278,7 +279,7 @@ Body (JSON):
 
 ### Clasificación con SVM
 
-`POST http://localhost:8000/classify/svm`
+`POST http://localhost:8989/classify/svm`
 
 Body (JSON):
 ```json
@@ -297,7 +298,7 @@ Body (JSON):
 
 ### Clasificación con Gradient Boosting
 
-`POST http://localhost:8000/classify/gradientboosting`
+`POST http://localhost:8989/classify/gradientboosting`
 
 Body (JSON):
 ```json
@@ -316,7 +317,7 @@ Body (JSON):
 
 ### Validación de errores
 
-`POST http://localhost:8000/classify/svm`
+`POST http://localhost:8989/classify/svm`
 
 Body (JSON) con valor inválido en `island`:
 ```json
@@ -335,6 +336,6 @@ Body (JSON) con valor inválido en `island`:
 
 ### Modelo inexistente
 
-`POST http://localhost:8000/classify/xgboost`
+`POST http://localhost:8989/classify/xgboost`
 
 ![Postman modelo inexistente](images/postman_model_not_found.png)
